@@ -88,34 +88,33 @@ def Setting2(FILENAME):
     pick_zahyo = np.zeros((int(node/2),2),dtype = float,order ='C')
     delivery_zahyo = np.zeros((int(node/2),2),dtype = float,order ='C')
 
-    for i in range(int(node/2)):
+    for i in range(int(node)):
         if i == 0:
-            pick_zahyo[i][0] =mat[i][1]
-            pick_zahyo[i][1] =mat[i][2]
+            pick.append(0)
         elif node_taio[i][0] == 0:
             pick.append(int(mat[i][0]))
 
     for i in range(len(pick)):
-        delivery.append(int(mat[pick[i]][8]))
+        if not i==0:
+            delivery.append(int(mat[pick[i]][8]))
 
+    kokyaku_list = copy.deepcopy(pick)
+    kokyaku_list.extend(delivery)
 
-    '''
     # 各距離の計算
-    c = np.zeros((len(mat), len(mat)), dtype=float, order='C')
+    c = np.zeros((len(mat),len(mat)), dtype=float, order='C')
+
+    for i in range(len(mat)):
+        for j in range(len(mat)):
+            c[i][j] = distance(mat[kokyaku_list[i]][1], mat[kokyaku_list[j]][1], mat[kokyaku_list[i]][2], mat[kokyaku_list[j]][2])
 
     # eがtime_windowの始、lが終
     e = np.zeros(len(mat), dtype=float, order='C')
     l = np.zeros(len(mat), dtype=float, order='C')
 
-    # テキストファイルからtime_windowを格納 & 各ノードの距離を計算し格納
-    for i in range(len(mat)):
-        e[i] = mat[i][5]
-        l[i] = mat[i][6]
-        for j in range(len(mat)):
-            c[i][j] = distance(mat[i][1], mat[j][1], mat[i][2], mat[j][2])
-'''
 
-    return Setting_Info, request_number,node_taio,pick,delivery
+
+    return Setting_Info, request_number,node_taio,pick,delivery,c,kokyaku_list
 
 if __name__ == '__main__':
     FILENAME = 'darp01.txt'
@@ -124,3 +123,12 @@ if __name__ == '__main__':
     a = Setting2(filename)
     print(a[3])
     print(a[4])
+    print(np.average(a[5]))
+    print(np.max(a[5]))
+    print(np.min(a[5]))
+    b=Setting(FILENAME)
+    print(np.average(a[3]))
+    print(np.max(b[3]))
+    print(np.min(b[3]))
+    print(a[6])
+    print(np.arange(53))
